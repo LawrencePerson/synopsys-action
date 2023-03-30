@@ -10,23 +10,23 @@ The Synopsys GitHub Action allows you to configure your pipeline to run Synopsys
 
 # Quick Start for the Synopsys Action
 
-The Synopsys Action supports all major Synopsys security testing solutions:
-- Polaris, our SaaS-based solution that offers SAST, SCA and Managed Services in a single unified platform
+The Synopsys Action supports the following Synopsys security testing solutions:
+- Polaris, our SaaS-based solution offering SAST, SCA and Managed Services in a single unified platform
 - Coverity, using our thin client and cloud-based deployment model
 - Black Duck Hub, supporting either on-premises or hosted instances
 
-In this Quick Start, we will provide individual examples for each Synopsys security testing solution, but in practice, the options can be combined to run multiple solutions from a single GitHub workflow step.
+In this Quick Start, we provide individual examples for each Synopsys security testing solution, but in practice, the options can be combined to run multiple solutions from a single GitHub workflow step.
 
-These workflows will:
+These workflows:
 - Validate Scanning platform-related parameters like project and stream
 - Download the Synopsys Bridge and related adapters
 - Run corresponding Synopsys Bridge commands using the specified parameters
-- Synopsys solution functionality is invoked directly by the Synopsys Bridge, and indirectly by the Synopsys Action
+- Invoke Synopsys solution functionality using the Synopsys Bridge, and indirectly by the Synopsys Action
 
 ## Synopsys GitHub Action - Polaris
 
 Before you can run a pipeline using the Synopsys Action and Polaris, you must make sure the appropriate
-applications, projects and entitlements are set in your Polaris environment.
+applications, projects and entitlements are properly configured in your Polaris environment.
 
 At this time, Polaris does not support the analysis of pull requests. We recommend running the Synopsys Action on
 pushes to main branches.
@@ -69,17 +69,17 @@ jobs:
 
 # Synopsys GitHub Action - Coverity Cloud Deployment with Thin Client
 
-Please note that the Synopsys Action at this time supports only the Coverity cloud deployment model (Kubernetes-based)
-which uses a small footprint thin client to capture the source code, and then submit an analysis job that runs on the server.
+Please note that at this time the Synopsys Action supports only the Coverity cloud deployment model (Kubernetes-based),
+which uses a small footprint thin client to capture the source code, then submit an analysis job that runs on the server.
 This removes the need for a large footprint (many GB) software installation in your GitHub Runner.
 
 **If you are using a regular (non-Kubernetes) deployment of Coverity** please see the [Coverity json-output-v7 Report Action](https://github.com/marketplace/actions/coverity-json-output-v7-report).
 
-On pushes, a full Coverity scan will be run and results committed to the Coverity Connect database.
-On pull requests, the scan will typically be incremental, and results will not be committed to the Coverity Connect database.
+On pushes, a full Coverity scan runs and results committed to the Coverity Connect database.
+On pull requests, the scan is typically incremental, and results are not committed to the Coverity Connect database.
 A future release of the action will provide code review feedback for newly introduced findings to the pull request.
 
-Before you can run a pipeline using the Synopsys Action and Coverity, you must make sure the appropriate
+Before you can run a pipeline using the Synopsys Action and Coverity, make sure the appropriate
 project and stream are set in your Coverity Connect server environment.
 
 We recommend configuring sensitive data like username and password, and even URL, using GitHub secrets.
@@ -133,27 +133,27 @@ jobs:
 ## Synopsys GitHub Action - Black Duck
 The Synopsys Action supports both self-hosted (e.g. on-prem) and Synopsys-hosted Black Duck Hub instances.
 
-No preparation is typically needed before running the pipeline. In the default Black Duck Hub permission model,
+Typically no preparation is needed before running the pipeline. In the default Black Duck Hub permission model,
 projects and project versions are created on the fly and as needed.
 
-On pushes, a full "intelligent" Black Duck scan will be run. On pull requests, a "rapid" ephemeral scan will be run.
+On pushes, a full "intelligent" Black Duck scan runs. On pull requests, a "rapid" ephemeral scan runs.
 A future release of the action will provide code review feedback for newly introduced findings to the pull request.
 
-We recommend configuring sensitive data like access tokens and even URLs, using GitHub secrets.
+We recommend configuring sensitive data like access tokens, and even URLs, using GitHub secrets.
 
-**Note about Detect command line parameters:** Any command line parameters that you need to pass to detect
-can be passed through environment variables. This is a standard capability of Detect. For example, if you
+**Note about Detect command line parameters:** Any command line parameters needed to pass to Detect
+can be passed through environment variables. This is a standard Detect capability. For example, if you
 wanted to only report newly found policy violations on rapid scans, you would normally use the command line 
 `--detect.blackduck.rapid.compare.mode=BOM_COMPARE_STRICT`. You can replace this by setting the 
 `DETECT_BLACKDUCK_RAPID_COMPARE_MODE` environment variable to `BOM_COMPARE_STRICT` and configure this in your
 GitHub workflow.
 
 **Note about Fix Pull requests creation:** <br/>
-* **blackduck_automation_fixpr:**- By default fix pull request creation will be disabled (i.e. Create
+* **blackduck_automation_fixpr:**- Fix pull request creation wis disabled by default (i.e. create
 fix pull requests if vulnerabilities are reported). To enable this feature, set blackduck_automation_fixpr
-as true.<br/> 
-* **github_token:** It is mandatory to pass github_token parameter with required permissions. The token can be github
-specified secrets.GITHUB_TOKEN with required permissions. For more information on Github token see [Github Doc](https://docs.github.com/en/actions/security-guides/automatic-token-authentication) <br/>
+to true. <br/>
+* **github_token:** Always pass github_token parameter with required permissions, such as GitHub
+specified secrets.GITHUB_TOKEN. For more information on GitHub tokens, see [Github Doc](https://docs.github.com/en/actions/security-guides/automatic-token-authentication) <br/>
   * Note - If blackduck_automation_fixpr is set to false, github_token is not required
   
 * **As per observation, due to rate limit restriction of github rest api calls, we may
@@ -185,7 +185,7 @@ jobs:
           blackduck_url: ${{ secrets.BLACKDUCK_URL }}
 
           # Optional parameter. By default, pushes will initiate a full "intelligent" scan and pull requests
-          # will initiate a rapid scan.
+          # initiates a rapid scan.
           blackduck_scan_full: false
           # Required parameter if blackduck_automation_fixpr is enabled
           # Make sure GITHUB_TOKEN have appropriate permissions
@@ -193,7 +193,7 @@ jobs:
           # Optional parameter. By default, create fix pull requests if vulnerabilities are reported
           # Passing false will disable fix pull request creation 
           blackduck_automation_fixpr: true
-          # Optional parameter. The values could be. ALL|NONE|BLOCKER|CRITICAL|MAJOR|MINOR|OK|TRIVIAL|UNSPECIFIED
+          # Optional parameter. The values could be ALL|NONE|BLOCKER|CRITICAL|MAJOR|MINOR|OK|TRIVIAL|UNSPECIFIED
           # Single parameter
           blackduck_scan_failure_severities: "ALL"
           # multiple parameters
@@ -217,11 +217,11 @@ jobs:
 
 The most common way to set up the Synopsys Bridge is to configure the action to download the small (~50 MB) CLI utility that is then automatically run at the right stage of your pipeline.
 
-The latest version of Synopsys Bridge will be downloaded by default.
+The latest version of Synopsys Bridge downloads by default.
 
 ## Manual Synopsys Bridge
 
-If you are unable to download the Synopsys Bridge from our internet-hosted repository or have been directed by support or services to use a custom version of the Synopsys Bridge, you can either specify a custom URL or pre-configure your GitHub runner to include the Synopsys Bridge. In this latter case, you would specify the `synopsys_bridge_path` parameter to specify the location of the directory in which the Synopsys Bridge is pre-installed.
+If you are unable to download the Synopsys Bridge from our internet-hosted repository, or have been directed by support or services to use a custom version of the Synopsys Bridge, you can either specify a custom URL or pre-configure your GitHub runner to include the Synopsys Bridge. In this latter case, specify the `synopsys_bridge_path` parameter to specify the location of the directory in which the Synopsys Bridge is pre-installed.
 
 # Future Enhancements
 
